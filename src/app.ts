@@ -12,6 +12,7 @@ import passport from 'passport';
 import passportConfig from './configs/passport.configs';
 
 const app = express();
+const JWTSecretKey: string = process.env.JWT_SECRET_KEY || 'secret';
 
 connectDB();
 app.use(cors());
@@ -19,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(session({
-  secret: 'chat-app-secret',
+  secret: JWTSecretKey,
   resave: false,
   saveUninitialized: true,
 }));

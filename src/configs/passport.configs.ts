@@ -13,10 +13,16 @@ const passportConfig = () => {
   passport.use(new Strategy(options, async (payload: RegisterUserData, done) => {
     try {
       const findUser = await User.findById(payload._id).lean();
-      if (!findUser) return done(null);
-      return done(null, findUser._id);
+      if (!findUser) return done(null, false);
+
+      const userData: RegisterUserData = {
+        _id: findUser._id || null,
+        photo_url: findUser.photo_url || null,
+        name: findUser.name || null,
+        phone_number: findUser.phone_number || null
+      };
+      return done(null, userData);
     } catch (error) {
-      console.log('error: ', error);
       return done(error);
     }
   }));
