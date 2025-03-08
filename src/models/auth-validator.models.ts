@@ -3,3 +3,8 @@ export interface RegisterUserValidatorSchema {
   phone_number: string;
   password: string;
 }
+
+export interface LoginUserValidatorSchema {
+  phone_number: string;
+  password: string;
+}
