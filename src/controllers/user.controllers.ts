@@ -10,7 +10,6 @@ const app = express();
 app.get('/profile', passport.authenticate('jwt', { session: false, failureRedirect: '/unauthorized' }), async (req: Request, res: Response) => {
   try {
     const user = req.user as UserData;
-
     const findUser = await User.findById(user._id).lean();
     if (!findUser) throw new AuthorizationError('Unauthorized');
 

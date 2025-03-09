@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 export interface RegisterUserResponse {
   status: string;
-  accessToken: string;
+  access_token: string;
   data: RegisterUserData;
 }
 
