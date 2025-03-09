@@ -32,11 +32,11 @@ app.post('/register', async (req: Request, res: Response) => {
       phone_number: phoneNumber.number
     });
     const newUser = await user.save();
-    const token = jwt.sign({ _id: newUser._id }, JWTSecretKey, { expiresIn: '30d' });
+    const token = jwt.sign({ _id: newUser._id }, JWTSecretKey);
 
     const result: RegisterUserResponse = {
       status: 'OK',
-      accessToken: `Bearer ${token}`,
+      access_token: `Bearer ${token}`,
       data: {
         _id: newUser._id,
         photo_url: newUser.photo_url || null,
@@ -64,10 +64,10 @@ app.post('/login', async (req: Request, res: Response) => {
     const isValidPassword = bcrypt.compareSync(validate.password, findUser.password);
     if (!isValidPassword) throw new InvariantError('Login failed!');
 
-    const token = jwt.sign({ _id: findUser._id }, JWTSecretKey, { expiresIn: '30d' });
+    const token = jwt.sign({ _id: findUser._id }, JWTSecretKey);
     const result: RegisterUserResponse = {
       status: 'OK',
-      accessToken: `Bearer ${token}`,
+      access_token: `Bearer ${token}`,
       data: {
         _id: findUser._id,
         photo_url: findUser.photo_url || null,

@@ -1,14 +1,14 @@
 import { Types } from "mongoose";
 
-export interface RegisterUserResponse {
+export interface ProfileUserResponse {
   status: string;
-  access_token: string;
-  data: RegisterUserData;
+  data: UserData;
 }
 
-export interface RegisterUserData {
+export interface UserData {
   _id: Types.ObjectId | null;
   photo_url: string | null;
   name: string | null;
   phone_number: string | null;
+  status: number | null;
 }
