@@ -13,8 +13,17 @@ import passportConfig from './configs/passport.configs';
 import { UserData } from './models/user-controller.models';
 import cookieParser from 'cookie-parser';
 import User from './db/models/user.models';
+import { Server } from 'socket.io';
+import { createServer } from 'node:http';
+import socketIoServer from './socket-io-server';
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
 const JWTSecretKey: string = process.env.JWT_SECRET_KEY || 'secret';
 
 connectDB();
@@ -47,6 +56,8 @@ passport.deserializeUser(async (id: string, done) => {
   done(null, user);
 });
 
+socketIoServer(io);
+
 app.get('/', (_, res: Response) => {
   res.json({ status: 'OK', message: 'Welcome to Chat App' });
 });
@@ -56,6 +67,6 @@ app.get('/unauthorized', (_, res: Response) => {
 app.use('/chat-app/api', apiRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
