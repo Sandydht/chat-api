@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 import parsePhoneNumber from 'libphonenumber-js';
 import passport from 'passport';
 import { USER_SCHEMA } from '../constants/user-schema.constants';
+import AuthorizationError from '../exceptions/commons/AuthorizationError';
 
 const app = express();
 const JWTSecretKey: string = process.env.JWT_SECRET_KEY || 'secret';
@@ -73,6 +74,8 @@ app.post('/login', async (req: Request, res: Response) => {
 
 app.post('/logout', passport.authenticate('jwt', { session: false, failureRedirect: '/unauthorized' }), async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (!req.user) throw new AuthorizationError('Unauthorized');
+
     req.logout((error) => {
       if (error) next(error);
       res.json({ status: 'OK', message: 'See u' });
