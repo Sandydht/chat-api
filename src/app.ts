@@ -1,21 +1,21 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import express from 'express';
+import express, { Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import apiRoutes from './routes/api.routes';
-import { Response } from 'express';
 import connectDB from './db';
 import session from 'express-session';
-import passport from 'passport';
+import passport, { use } from 'passport';
 import passportConfig from './configs/passport.configs';
 import { UserData } from './models/user-controller.models';
 import cookieParser from 'cookie-parser';
 import User from './db/models/user.models';
-import { Server } from 'socket.io';
+import { ExtendedError, Server, Socket } from 'socket.io';
 import { createServer } from 'node:http';
 import socketIoServer from './socket-io-server';
+import AuthenticationError from './exceptions/commons/AuthenticationError';
 
 const app = express();
 const server = createServer(app);
@@ -36,24 +36,25 @@ app.use(cookieParser());
 app.use(session({
   secret: JWTSecretKey,
   resave: false,
-  saveUninitialized: false,
-  cookie: { 
-    secure: false,
-  },
+  saveUninitialized: false
 }));
 
 passportConfig();
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => {
-  const userData = user as UserData;
-  done(null, userData._id);
+passport.serializeUser((id, done) => {
+  done(null, id);
 });
 
-passport.deserializeUser(async (id: string, done) => {
-  const user = await User.findById(id);
-  done(null, user);
+passport.deserializeUser((id: string, done) => {
+  done(null, id);
+});
+
+io.use((socket: Socket, next: (err?: ExtendedError) => void) => {
+  const token = socket.handshake.query?.token;
+  if (!token) return next(new AuthenticationError('Unauthorized'));
+  return next();
 });
 
 socketIoServer(io);

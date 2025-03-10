@@ -11,6 +11,8 @@ import { RegisterUserResponse } from '../models/auth-controller.models';
 import jwt from 'jsonwebtoken';
 import parsePhoneNumber from 'libphonenumber-js';
 import passport from 'passport';
+import { USER_SCHEMA } from '../constants/user-schema.constants';
+import AuthorizationError from '../exceptions/commons/AuthorizationError';
 
 const app = express();
 const JWTSecretKey: string = process.env.JWT_SECRET_KEY || 'secret';
@@ -36,13 +38,7 @@ app.post('/register', async (req: Request, res: Response) => {
 
     const result: RegisterUserResponse = {
       status: 'OK',
-      access_token: `Bearer ${token}`,
-      data: {
-        _id: newUser._id,
-        photo_url: newUser.photo_url || null,
-        name: newUser.name || null,
-        phone_number: newUser.phone_number || null
-      }
+      access_token: token
     };
 
     res.json(result);
@@ -58,7 +54,7 @@ app.post('/login', async (req: Request, res: Response) => {
     const phoneNumber = parsePhoneNumber(validate.phone_number, 'ID');
     if (!phoneNumber?.isValid()) throw new InvariantError('Phone number is invalid!');
 
-    const findUser = await User.findOne({ phone_number: phoneNumber.number }).lean();
+    const findUser = await User.findOne({ phone_number: phoneNumber.number, data_status: USER_SCHEMA.DATA_STATUS_ACTIVE }).lean();
     if (!findUser) throw new InvariantError('Login failed!');
 
     const isValidPassword = bcrypt.compareSync(validate.password, findUser.password);
@@ -67,13 +63,7 @@ app.post('/login', async (req: Request, res: Response) => {
     const token = jwt.sign({ _id: findUser._id }, JWTSecretKey);
     const result: RegisterUserResponse = {
       status: 'OK',
-      access_token: `Bearer ${token}`,
-      data: {
-        _id: findUser._id,
-        photo_url: findUser.photo_url || null,
-        name: findUser.name || null,
-        phone_number: findUser.phone_number || null
-      }
+      access_token: token
     };
 
     res.json(result);
@@ -84,6 +74,8 @@ app.post('/login', async (req: Request, res: Response) => {
 
 app.post('/logout', passport.authenticate('jwt', { session: false, failureRedirect: '/unauthorized' }), async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (!req.user) throw new AuthorizationError('Unauthorized');
+
     req.logout((error) => {
       if (error) next(error);
       res.json({ status: 'OK', message: 'See u' });

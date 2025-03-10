@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
+import { UserData } from '../models/user-controller.models';
 import User from '../db/models/user.models';
-import { RegisterUserData } from '../models/auth-controller.models';
 
 const passportConfig = () => {
   const JWTSecretKey: string = process.env.JWT_SECRET_KEY || 'secret';
@@ -10,20 +10,21 @@ const passportConfig = () => {
     secretOrKey: JWTSecretKey,
   };
 
-  passport.use(new Strategy(options, async (payload: RegisterUserData, done) => {
+  passport.use(new Strategy(options, async (payload: UserData, done) => {
     try {
-      const findUser = await User.findById(payload._id).lean();
+      const userID = payload._id;
+      const findUser = await User.findById(userID).lean();
       if (!findUser) return done(null, false);
-
-      const userData: RegisterUserData = {
-        _id: findUser._id || null,
-        photo_url: findUser.photo_url || null,
-        name: findUser.name || null,
-        phone_number: findUser.phone_number || null
+      
+      const userData: UserData = {
+        _id: findUser._id,
+        name: findUser.name,
+        phone_number: findUser.phone_number,
+        data_status: findUser.data_status
       };
       return done(null, userData);
     } catch (error) {
-      return done(error);
+      return done(error, false);
     }
   }));
 };

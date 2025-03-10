@@ -9,8 +9,10 @@ const app = express();
 
 app.get('/profile', passport.authenticate('jwt', { session: false, failureRedirect: '/unauthorized' }), async (req: Request, res: Response) => {
   try {
-    const user = req.user as UserData;
-    const findUser = await User.findById(user._id).lean();
+    if (!req.user) throw new AuthorizationError('Unauthorized');
+
+    const userData = req.user as UserData;
+    const findUser = await User.findById(userData._id).lean();
     if (!findUser) throw new AuthorizationError('Unauthorized');
 
     const result: ProfileUserResponse = {
@@ -20,10 +22,9 @@ app.get('/profile', passport.authenticate('jwt', { session: false, failureRedire
         photo_url: findUser.photo_url || null,
         name: findUser.name || null,
         phone_number: findUser.phone_number || null,
-        status: findUser.status || null,
+        data_status: findUser.data_status || null,
       }
     };
-
     res.json(result);
   } catch (error) {
     errorHandler(res, error);

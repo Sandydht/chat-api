@@ -13,6 +13,10 @@ const socketIoServer = (io: SocketIOServer) => {
     socket.on(SOCKET_IO.DISCONNECT, () => {
       console.log('A user disconnected');
     });
+
+    socket.on(SOCKET_IO.CONNECT_ERROR, (error: Error) => {
+      console.log('Connection error:', error.message);
+    });
   });
 };
 
