@@ -10,5 +10,5 @@ export interface UserData {
   photo_url: string | null;
   name: string | null;
   phone_number: string | null;
-  status: number | null;
+  data_status: string | null;
 }

@@ -1,32 +1,33 @@
-import { Schema, SchemaTypes } from 'mongoose';
+import { Schema } from 'mongoose';
 
 const userSchema = new Schema({
   photo_url: {
-    type: SchemaTypes.String,
+    type: Schema.Types.String,
     required: false
   },
   name: {
-    type: SchemaTypes.String,
+    type: Schema.Types.String,
     required: true
   },
   phone_number: {
-    type: SchemaTypes.String,
+    type: Schema.Types.String,
     required: true
   },
   password: {
-    type: SchemaTypes.String,
+    type: Schema.Types.String,
     required: true
   },
-  status: {
-    type: SchemaTypes.Number,
+  data_status: {
+    type: Schema.Types.String,
     required: true,
-    default: 1
+    default: 'ACTIVE'
   }
 }, {
   timestamps: {
     createdAt: 'created_at',
     updatedAt: 'updated_at'
-  }
+  },
+  versionKey: false
 });
 
 export default userSchema;
