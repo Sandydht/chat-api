@@ -6,7 +6,6 @@ import { Model } from 'mongoose';
 import parsePhoneNumber, { E164Number } from 'libphonenumber-js';
 import * as bcrypt from 'bcrypt';
 import { DEVELOPMENT_ENVIRONMENT } from 'src/environments/development.environments';
-import * as jwt from 'jsonwebtoken';
 import { LoginAccountDto } from './dto/login-account.dto';
 import { RegisteredUserAccount } from './interface/authentication.interface';
 
@@ -16,7 +15,7 @@ export class AuthenticationService {
     @InjectModel(User.name) private userModel: Model<User>
   ) { }
 
-  async registerAccount(registerAccountDto: RegisterAccountDto): Promise<string> {
+  async registerAccount(registerAccountDto: RegisterAccountDto): Promise<RegisteredUserAccount> {
     const phoneNumber = parsePhoneNumber(registerAccountDto.phone_number, 'ID');
     await this.validateRegisteredUser(phoneNumber?.number);
     const hashedPassword = await bcrypt.hash(registerAccountDto.password, Number(DEVELOPMENT_ENVIRONMENT.BCRYPT_SALT_ROUNDS));
@@ -25,17 +24,14 @@ export class AuthenticationService {
       phone_number: phoneNumber?.number,
       password: hashedPassword
     });
-    const registeredUser = await newUser.save();
-    const token = jwt.sign({ _id: registeredUser._id }, String(DEVELOPMENT_ENVIRONMENT.JWT_SECRET_KEY));
-    return token;
+    return newUser.save();
   }
 
-  async loginAccount(loginAccountDto: LoginAccountDto): Promise<string> {
+  async loginAccount(loginAccountDto: LoginAccountDto): Promise<RegisteredUserAccount> {
     const phoneNumber = parsePhoneNumber(loginAccountDto.phone_number, 'ID');
     const findUser = await this.validateLoginUser(phoneNumber?.number);
     await this.validateUserPassword(loginAccountDto.password, findUser.password);
-    const token = jwt.sign({ _id: findUser._id }, String(DEVELOPMENT_ENVIRONMENT.JWT_SECRET_KEY));
-    return token;
+    return findUser;
   }
 
   async validateRegisteredUser(phone_number: string | E164Number | undefined): Promise<void> {
