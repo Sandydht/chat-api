@@ -4,7 +4,7 @@ import { RegisterAccountDto } from './dto/register-account.dto';
 import { AuthenticationService } from './authentication.service';
 import { LoginAccountDto } from './dto/login-account.dto';
 import { JwtService } from '@nestjs/jwt';
-import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/configs/jwt-auth/jwt-auth.guard';
 import { Request as ExpressRequest } from 'express';
 
 @Controller('chat-app/api/authentication')

@@ -1,7 +1,7 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUserProfileResponse } from './interface/user.interface';
-import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/configs/jwt-auth/jwt-auth.guard';
 import { Request as ExpressRequest } from 'express';
 import { UserJwtPayload } from '../authentication/interface/authentication.interface';
 
