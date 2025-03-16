@@ -41,12 +41,12 @@ export class AuthenticationService {
 
   async validateLoginUser(phone_number: string | E164Number | undefined): Promise<RegisteredUserAccount> {
     const user = await this.userModel.findOne({ phone_number }).lean().exec();
-    if (!user) throw new HttpException('Phone number or number incorrect!', HttpStatus.BAD_REQUEST);
+    if (!user) throw new HttpException('Phone number or password incorrect!', HttpStatus.BAD_REQUEST);
     return user;
   }
 
   async validateUserPassword(password: string, userPasswordHash: string): Promise<void> {
     const isPasswordMatch = await bcrypt.compare(password, userPasswordHash);
-    if (!isPasswordMatch) throw new HttpException('Phone number or number incorrect!', HttpStatus.BAD_REQUEST);
+    if (!isPasswordMatch) throw new HttpException('Phone number or password incorrect!', HttpStatus.BAD_REQUEST);
   }
 }
