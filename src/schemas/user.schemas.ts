@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
+import { Contact } from "./contact.schemas";
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -31,6 +32,12 @@ export class User {
 
   @Prop({
     type: SchemaTypes.String,
+    required: false,
+    default: 'Hey there! I am using Social App.'
+  })
+
+  @Prop({
+    type: SchemaTypes.String,
     required: true
   })
   password: string;
@@ -44,3 +51,10 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.virtual('is_contact', {
+  ref: Contact.name,
+  localField: '_id',
+  foreignField: 'member_id',
+  justOne: true
+});

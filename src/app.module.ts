@@ -6,6 +6,7 @@ import { DEVELOPMENT_ENVIRONMENT } from './environments/development.environments
 import { Connection } from 'mongoose';
 import { UserModule } from './modules/user/user.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { EventsModule } from './modules/events/events.module';
 
 let mongoURL = `mongodb+srv://${DEVELOPMENT_ENVIRONMENT.MONGO_USERNAME}:${DEVELOPMENT_ENVIRONMENT.MONGO_PASSWORD}@${DEVELOPMENT_ENVIRONMENT.MONGO_HOST}/${DEVELOPMENT_ENVIRONMENT.MONGO_DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`;
 
