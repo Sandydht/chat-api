@@ -12,7 +12,7 @@ import { RegisteredUserAccount } from './interface/authentication.interface';
 @Injectable()
 export class AuthenticationService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>
+    @InjectModel(User.name) private readonly userModel: Model<User>
   ) { }
 
   async registerAccount(registerAccountDto: RegisterAccountDto): Promise<RegisteredUserAccount> {

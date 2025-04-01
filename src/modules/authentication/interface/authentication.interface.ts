@@ -16,6 +16,7 @@ export interface RegisteredUserAccount {
   name: string;
   phone_number: string;
   password: string;
+  description: string;
 }
 
 export interface UserJwtPayload {

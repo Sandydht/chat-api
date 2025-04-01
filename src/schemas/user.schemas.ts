@@ -35,6 +35,7 @@ export class User {
     required: false,
     default: 'Hey there! I am using Social App.'
   })
+  description: string;
 
   @Prop({
     type: SchemaTypes.String,

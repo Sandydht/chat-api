@@ -1,11 +1,10 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { GetUserProfileResponse, GetUsersResponse } from './interface/user.interface';
 import { JwtAuthGuard } from 'src/configs/jwt-auth/jwt-auth.guard';
 import { Request as ExpressRequest } from 'express';
 import { UserJwtPayload } from '../authentication/interface/authentication.interface';
 import { getUserListData, getUserProfileData } from './transformer/user.transformer';
-import { SaveContactRequest, SaveContactResponse } from './interface/contact.interface';
 
 @Controller('chat-app/api/user')
 export class UserController {
@@ -36,21 +35,6 @@ export class UserController {
     return {
       status: 'OK', 
       data: mapUserData
-    };
-  }
-
-  @Post('save-contact')
-  @UseGuards(JwtAuthGuard)
-  async saveContact(@Request() req: ExpressRequest, @Body() payload: SaveContactRequest): Promise<SaveContactResponse> {
-    const user = req.user as unknown as UserJwtPayload;
-    await this.userService.saveUser({
-      ownerID: user._id,
-      memberID: payload.member_id
-    });
-
-    return {
-      status: 'OK',
-      message: 'Contact saved successfully'
     };
   }
 }
