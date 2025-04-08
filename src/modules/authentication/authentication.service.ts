@@ -5,7 +5,6 @@ import { User } from 'src/schemas/user.schema';
 import { Model } from 'mongoose';
 import parsePhoneNumber, { E164Number } from 'libphonenumber-js';
 import * as bcrypt from 'bcrypt';
-import { DEVELOPMENT_ENVIRONMENT } from 'src/environments/development.environment';
 import { LoginAccountDto } from './dto/login-account.dto';
 import { RegisteredUserAccount } from './interface/authentication.interface';
 
@@ -18,7 +17,7 @@ export class AuthenticationService {
   async registerAccount(registerAccountDto: RegisterAccountDto): Promise<RegisteredUserAccount> {
     const phoneNumber = parsePhoneNumber(registerAccountDto.phone_number, 'ID');
     await this.validateRegisteredUser(phoneNumber?.number);
-    const hashedPassword = await bcrypt.hash(registerAccountDto.password, Number(DEVELOPMENT_ENVIRONMENT.BCRYPT_SALT_ROUNDS));
+    const hashedPassword = await bcrypt.hash(registerAccountDto.password, Number(process.env.BCRYPT_SALT_ROUNDS));
     const newUser = new this.userModel({
       ...registerAccountDto,
       phone_number: phoneNumber?.number,

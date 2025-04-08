@@ -6,7 +6,6 @@ import { User, UserSchema } from 'src/schemas/user.schema';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../../configs/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { DEVELOPMENT_ENVIRONMENT } from 'src/environments/development.environment';
 
 @Module({
   imports: [
@@ -15,7 +14,7 @@ import { DEVELOPMENT_ENVIRONMENT } from 'src/environments/development.environmen
     ]),
     PassportModule,
     JwtModule.register({
-      secret: DEVELOPMENT_ENVIRONMENT.JWT_SECRET_KEY,
+      secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '30d' },
     })
   ],
