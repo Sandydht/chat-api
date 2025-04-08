@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DEVELOPMENT_ENVIRONMENT } from './environments/development.environments';
+import { DEVELOPMENT_ENVIRONMENT } from './environments/development.environment';
 import * as session from 'express-session';
 import * as passport from 'passport';
 

@@ -1,6 +1,6 @@
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { EVENT_CONSTANT } from './constants/events.constants';
+import { EVENT_CONSTANT } from './constants/events.constant';
 import { UserService } from '../user/user.service';
 
 @WebSocketGateway({

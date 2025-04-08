@@ -1,11 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { RegisterAccountDto } from './dto/register-account.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from 'src/schemas/user.schemas';
+import { User } from 'src/schemas/user.schema';
 import { Model } from 'mongoose';
 import parsePhoneNumber, { E164Number } from 'libphonenumber-js';
 import * as bcrypt from 'bcrypt';
-import { DEVELOPMENT_ENVIRONMENT } from 'src/environments/development.environments';
+import { DEVELOPMENT_ENVIRONMENT } from 'src/environments/development.environment';
 import { LoginAccountDto } from './dto/login-account.dto';
 import { RegisteredUserAccount } from './interface/authentication.interface';
 
