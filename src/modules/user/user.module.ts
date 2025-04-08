@@ -7,7 +7,7 @@ import { User, UserSchema } from 'src/schemas/user.schemas';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: User.name, schema: UserSchema }
+      { name: User.name, schema: UserSchema },
     ])
   ],
   providers: [UserService],

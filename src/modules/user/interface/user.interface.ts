@@ -8,4 +8,11 @@ export interface UserProfile {
   photo_url?: string | null;
   name: string | null;
   phone_number: string | null;
+  description?: string | null;
+  is_contact?: boolean | null;
+}
+
+export interface GetUsersResponse {
+  status: string;
+  data: UserProfile[];
 }
