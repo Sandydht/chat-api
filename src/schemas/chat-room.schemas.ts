@@ -1,4 +1,4 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, SchemaTypes } from "mongoose";
 
 export type ChatRoomDocument = HydratedDocument<ChatRoom>;
@@ -39,3 +39,5 @@ export class ChatRoom {
   })
   data_status: string;
 }
+
+export const ChatRoomSchema = SchemaFactory.createForClass(ChatRoom);
