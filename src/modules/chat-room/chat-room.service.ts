@@ -19,6 +19,7 @@ export class ChatRoomService {
       sender_id: createChatRoomDto.senderID,
       recipient_id: createChatRoomDto.recipientID
     });
+
     return chatRoom as unknown as ChatRoomData;
   }
 

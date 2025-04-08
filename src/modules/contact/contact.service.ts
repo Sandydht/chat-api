@@ -6,6 +6,7 @@ import { CreateContactDto } from './dto/create-contact.dto';
 import { ContactData } from './interface/contact.interface';
 import { User } from 'src/schemas/user.schema';
 import { UserProfile } from '../user/interface/user.interface';
+import { getContactData, getContactListData } from './transformer/contact.transformer';
 
 @Injectable()
 export class ContactService {
@@ -20,7 +21,9 @@ export class ContactService {
       owner_id: createContactDto.ownerID,
       member_id: findUser._id
     });
-    return contact as unknown as ContactData;
+    
+    const contactData = getContactData(contact);
+    return contactData;
   }
 
   async contactList(ownerID: string): Promise<any> {
@@ -32,7 +35,9 @@ export class ContactService {
       .populate('member_id')
       .lean()
       .exec();
-    return findContacts;
+    
+    const mapContactListData = getContactListData(findContacts);
+    return mapContactListData;
   }
 
   async validateUserData(userID: string): Promise<UserProfile> {
