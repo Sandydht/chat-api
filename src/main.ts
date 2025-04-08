@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DEVELOPMENT_ENVIRONMENT } from './environments/development.environment';
 import * as session from 'express-session';
 import * as passport from 'passport';
 
@@ -12,7 +11,7 @@ async function bootstrap() {
   });
 
   app.use(session({
-    secret: DEVELOPMENT_ENVIRONMENT.JWT_SECRET_KEY,
+    secret: process.env.JWT_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
   }));
@@ -20,6 +19,6 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  await app.listen(DEVELOPMENT_ENVIRONMENT.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -1,22 +1,35 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
-import { DEVELOPMENT_ENVIRONMENT } from './environments/development.environment';
-import { Connection } from 'mongoose';
 import { UserModule } from './modules/user/user.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { ContactModule } from './modules/contact/contact.module';
-
-let mongoURL = `mongodb://${DEVELOPMENT_ENVIRONMENT.MONGO_USERNAME}:${DEVELOPMENT_ENVIRONMENT.MONGO_PASSWORD}@${DEVELOPMENT_ENVIRONMENT.MONGO_HOST_1}:${DEVELOPMENT_ENVIRONMENT.MONGO_PORT},${DEVELOPMENT_ENVIRONMENT.MONGO_HOST_2}:${DEVELOPMENT_ENVIRONMENT.MONGO_PORT},${DEVELOPMENT_ENVIRONMENT.MONGO_HOST_3}:${DEVELOPMENT_ENVIRONMENT.MONGO_PORT}/?ssl=true&replicaSet=atlas-1z9oli-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`;
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+import databaseConfig from './configs/database.config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(mongoURL, {
-      onConnectionCreate: (connection: Connection) => {
-        connection.on('connected', () => console.log('Connected to MongoDB: ', new Date()));
-        return connection;
-      }
+    ConfigModule.forRoot({
+      envFilePath: ['.env.development', '.env.production'],
+      load: [databaseConfig]
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE.MONGO_URI'),
+        onConnectionCreate: (connection: Connection) => {
+          const databaseLogger = new Logger('Database');
+          connection.on('connected', () => databaseLogger.log('connected'));
+          connection.on('open', () => databaseLogger.log('open'));
+          connection.on('disconnected', () => databaseLogger.log('disconnected'));
+          connection.on('reconnected', () => databaseLogger.log('reconnected'));
+          connection.on('disconnecting', () => databaseLogger.log('disconnecting'));
+          return connection;
+        }
+      })
     }),
     AuthenticationModule,
     UserModule,
@@ -25,4 +38,4 @@ let mongoURL = `mongodb://${DEVELOPMENT_ENVIRONMENT.MONGO_USERNAME}:${DEVELOPMEN
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
