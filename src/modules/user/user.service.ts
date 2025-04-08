@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schemas/user.schema';
 import { UserProfile } from './interface/user.interface';
+import { getUserListData, getUserProfileData } from './transformer/user.transformer';
 
 @Injectable()
 export class UserService {
@@ -13,7 +14,8 @@ export class UserService {
   async getUserProfile(userID: string): Promise<UserProfile> {
     const findUser = await this.userModel.findById({ _id: userID }).lean().exec();
     if (!findUser) throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
-    return findUser as unknown as UserProfile;
+    const userProfileData = getUserProfileData(findUser);
+    return userProfileData;
   }
 
   async getUsers(userID: string): Promise<UserProfile[]> {
@@ -26,6 +28,8 @@ export class UserService {
       .sort({ created_at: -1 })
       .lean()
       .exec();
-    return findUsers as unknown as UserProfile[];
+    
+    const mapUserData = getUserListData(findUsers);
+    return mapUserData;
   }
 }
